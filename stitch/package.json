@@ -1,0 +1,72 @@
+{
+  "name": "stitch",
+  "version": "1.0.0",
+  "description": "Custom MCP server bridging AI clients to the Gemini API with multimodal and codebase-analysis capabilities.",
+  "type": "module",
+  "main": "setup/main.cjs",
+  "bin": {
+    "stitch": "build/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "start": "node build/index.js",
+    "dev": "node --watch build/index.js",
+    "setup": "electron setup/main.cjs",
+    "bundle": "esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/server.mjs --external:electron",
+    "package": "npm run build && npm run bundle && electron-builder",
+    "release": "node scripts/release.mjs"
+  },
+  "dependencies": {
+    "@google/genai": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "dotenv": "^16.4.5",
+    "glob": "^11.0.0",
+    "ignore": "^6.0.2",
+    "mime-types": "^2.1.35",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/mime-types": "^2.1.4",
+    "@types/node": "^22.0.0",
+    "esbuild": "^0.25.0",
+    "electron": "^35.7.5",
+    "electron-builder": "^26.8.1",
+    "typescript": "^5.5.0"
+  },
+  "build": {
+    "appId": "com.stitch.setup",
+    "productName": "Stitch",
+    "copyright": "Copyright © 2026",
+    "directories": {
+      "output": "../release",
+      "buildResources": "setup/assets"
+    },
+    "files": [
+      "setup/**/*",
+      "!setup/assets"
+    ],
+    "extraResources": [
+      {
+        "from": "dist/server.mjs",
+        "to": "server/index.mjs"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "setup/assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Stitch Setup"
+    }
+  }
+}

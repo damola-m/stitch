@@ -1,0 +1,4 @@
+{
+  "version": "1.0.0",
+  "notes": "Initial release — Gemini API bridge for Claude with grounded search, codebase analysis, PDF processing, image understanding, and knowledge base tools."
+}

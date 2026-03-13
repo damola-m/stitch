@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <PackageJsonName Condition="$(PackageJsonName) == ''">mcp-stitch</PackageJsonName>
+    <PackageJsonVersion Condition="$(PackageJsonVersion) == ''">1.0.0</PackageJsonVersion>
+    <PackageJsonDescription Condition="$(PackageJsonDescription) == ''">Custom MCP server bridging AI clients to the Gemini API with multimodal and codebase-analysis capabilities.</PackageJsonDescription>
+    <PackageJsonType Condition="$(PackageJsonType) == ''">module</PackageJsonType>
+    <PackageJsonMain Condition="$(PackageJsonMain) == ''">setup/main.cjs</PackageJsonMain>
+    <PackageJsonBinMcpStitch Condition="$(PackageJsonBinMcpStitch) == ''">build/index.js</PackageJsonBinMcpStitch>
+    <PackageJsonScriptsBuild Condition="$(PackageJsonScriptsBuild) == ''">tsc</PackageJsonScriptsBuild>
+    <PackageJsonScriptsBuildWatch Condition="$(PackageJsonScriptsBuildWatch) == ''">tsc --watch</PackageJsonScriptsBuildWatch>
+    <PackageJsonScriptsStart Condition="$(PackageJsonScriptsStart) == ''">node build/index.js</PackageJsonScriptsStart>
+    <PackageJsonScriptsDev Condition="$(PackageJsonScriptsDev) == ''">node --watch build/index.js</PackageJsonScriptsDev>
+    <PackageJsonScriptsSetup Condition="$(PackageJsonScriptsSetup) == ''">electron setup/main.cjs</PackageJsonScriptsSetup>
+    <PackageJsonScriptsBundle Condition="$(PackageJsonScriptsBundle) == ''">esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/server.mjs --external:electron</PackageJsonScriptsBundle>
+    <PackageJsonScriptsPackage Condition="$(PackageJsonScriptsPackage) == ''">npm run build &amp;&amp; npm run bundle &amp;&amp; electron-builder</PackageJsonScriptsPackage>
+    <PackageJsonScriptsRelease Condition="$(PackageJsonScriptsRelease) == ''">node scripts/release.mjs</PackageJsonScriptsRelease>
+    <PackageJsonDependenciesGoogleGenai Condition="$(PackageJsonDependenciesGoogleGenai) == ''">^1.0.0</PackageJsonDependenciesGoogleGenai>
+    <PackageJsonDependenciesModelcontextprotocolSdk Condition="$(PackageJsonDependenciesModelcontextprotocolSdk) == ''">^1.0.0</PackageJsonDependenciesModelcontextprotocolSdk>
+    <PackageJsonDependenciesDotenv Condition="$(PackageJsonDependenciesDotenv) == ''">^16.4.5</PackageJsonDependenciesDotenv>
+    <PackageJsonDependenciesGlob Condition="$(PackageJsonDependenciesGlob) == ''">^11.0.0</PackageJsonDependenciesGlob>
+    <PackageJsonDependenciesIgnore Condition="$(PackageJsonDependenciesIgnore) == ''">^6.0.2</PackageJsonDependenciesIgnore>
+    <PackageJsonDependenciesMimeTypes Condition="$(PackageJsonDependenciesMimeTypes) == ''">^2.1.35</PackageJsonDependenciesMimeTypes>
+    <PackageJsonDependenciesZod Condition="$(PackageJsonDependenciesZod) == ''">^3.23.8</PackageJsonDependenciesZod>
+    <PackageJsonDevdependenciesTypesMimeTypes Condition="$(PackageJsonDevdependenciesTypesMimeTypes) == ''">^2.1.4</PackageJsonDevdependenciesTypesMimeTypes>
+    <PackageJsonDevdependenciesTypesNode Condition="$(PackageJsonDevdependenciesTypesNode) == ''">^22.0.0</PackageJsonDevdependenciesTypesNode>
+    <PackageJsonDevdependenciesEsbuild Condition="$(PackageJsonDevdependenciesEsbuild) == ''">^0.25.0</PackageJsonDevdependenciesEsbuild>
+    <PackageJsonDevdependenciesElectron Condition="$(PackageJsonDevdependenciesElectron) == ''">^35.7.5</PackageJsonDevdependenciesElectron>
+    <PackageJsonDevdependenciesElectronBuilder Condition="$(PackageJsonDevdependenciesElectronBuilder) == ''">^26.8.1</PackageJsonDevdependenciesElectronBuilder>
+    <PackageJsonDevdependenciesTypescript Condition="$(PackageJsonDevdependenciesTypescript) == ''">^5.5.0</PackageJsonDevdependenciesTypescript>
+    <PackageJsonBuildAppid Condition="$(PackageJsonBuildAppid) == ''">com.mcpstitch.setup</PackageJsonBuildAppid>
+    <PackageJsonBuildProductname Condition="$(PackageJsonBuildProductname) == ''">MCP.Stitch</PackageJsonBuildProductname>
+    <PackageJsonBuildCopyright Condition="$(PackageJsonBuildCopyright) == ''">Copyright © 2026</PackageJsonBuildCopyright>
+    <PackageJsonBuildDirectoriesOutput Condition="$(PackageJsonBuildDirectoriesOutput) == ''">../release</PackageJsonBuildDirectoriesOutput>
+    <PackageJsonBuildDirectoriesBuildresources Condition="$(PackageJsonBuildDirectoriesBuildresources) == ''">setup/assets</PackageJsonBuildDirectoriesBuildresources>
+    <PackageJsonBuildFiles Condition="$(PackageJsonBuildFiles) == ''">[
+  "setup/**/*",
+  "!setup/assets"
+]</PackageJsonBuildFiles>
+    <PackageJsonBuildExtraresources Condition="$(PackageJsonBuildExtraresources) == ''">[
+  {
+    "from": "dist/server.mjs",
+    "to": "server/index.mjs"
+  }
+]</PackageJsonBuildExtraresources>
+    <PackageJsonBuildWinTarget Condition="$(PackageJsonBuildWinTarget) == ''">[
+  {
+    "target": "nsis",
+    "arch": [
+      "x64"
+    ]
+  }
+]</PackageJsonBuildWinTarget>
+    <PackageJsonBuildWinIcon Condition="$(PackageJsonBuildWinIcon) == ''">setup/assets/icon.ico</PackageJsonBuildWinIcon>
+    <PackageJsonBuildNsisOneclick Condition="$(PackageJsonBuildNsisOneclick) == ''">false</PackageJsonBuildNsisOneclick>
+    <PackageJsonBuildNsisAllowtochangeinstallationdirectory Condition="$(PackageJsonBuildNsisAllowtochangeinstallationdirectory) == ''">false</PackageJsonBuildNsisAllowtochangeinstallationdirectory>
+    <PackageJsonBuildNsisCreatedesktopshortcut Condition="$(PackageJsonBuildNsisCreatedesktopshortcut) == ''">true</PackageJsonBuildNsisCreatedesktopshortcut>
+    <PackageJsonBuildNsisCreatestartmenushortcut Condition="$(PackageJsonBuildNsisCreatestartmenushortcut) == ''">true</PackageJsonBuildNsisCreatestartmenushortcut>
+    <PackageJsonBuildNsisShortcutname Condition="$(PackageJsonBuildNsisShortcutname) == ''">MCP.Stitch Setup</PackageJsonBuildNsisShortcutname>
+  </PropertyGroup>
+</Project>

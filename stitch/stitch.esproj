@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.4338480">
+  <PropertyGroup>
+    <StartupCommand>npm run dev</StartupCommand>
+    <JavaScriptTestRoot>src\</JavaScriptTestRoot>
+    <JavaScriptTestFramework>Vitest</JavaScriptTestFramework>
+    <!-- Build script in package.json runs tsc on VS Build -->
+    <ShouldRunBuildScript>true</ShouldRunBuildScript>
+    <!-- Compiled JS output lands here -->
+    <BuildOutputFolder>$(MSBuildProjectDirectory)\build</BuildOutputFolder>
+  </PropertyGroup>
+</Project>

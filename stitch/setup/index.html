@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- CSP: no remote scripts, no eval. Fonts allowed for Material Symbols. -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline';" />
+  <title>Stitch — Setup</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" />
+  <style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+  </style>
+  <style>
+    html, body { height: 100%; overflow: hidden; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #000000;
+      --surface:   #111111;
+      --border:    #222222;
+      --accent:    #4f8ef7;
+      --accent-hv: #3a78e8;
+      --success:   #34c759;
+      --error:     #ff453a;
+      --warn:      #ffa340;
+      --text:      #e8eaf0;
+      --muted:     #7a7f96;
+      --radius:    8px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-app-region: no-drag;
+    }
+
+    /* ── Drag strip — sits above everything in the titlebar zone ── */
+    .drag-strip {
+      position: fixed;
+      top: 0; left: 0; right: 120px;
+      height: 32px;
+      -webkit-app-region: drag;
+      z-index: 999;
+    }
+
+    /* ── Flip container ─────────────────────────── */
+    .flip-container {
+      width: 100%;
+      height: 100%;
+      perspective: 1200px;
+    }
+    .flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .flip-inner.flipped { transform: rotateY(180deg); }
+
+    .flip-front, .flip-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      background: var(--bg);
+    }
+    .flip-front {
+      padding: 36px 24px 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .flip-front .footer {
+      margin-top: auto;
+    }
+    .flip-back {
+      transform: rotateY(180deg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Back face header ───────────────────────── */
+    .back-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 40px 24px 14px;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .back-header h2 { font-size: 15px; font-weight: 600; }
+    .back-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 28px; height: 28px;
+      color: var(--muted);
+      font-size: 14px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Back face body ─────────────────────────── */
+    .back-body {
+      overflow-y: auto;
+      padding: 16px 24px 0;
+      flex: 1;
+    }
+    .back-footer {
+      height: 20px;
+      flex-shrink: 0;
+      background: var(--bg);
+    }
+    .back-body::-webkit-scrollbar { width: 4px; }
+    .back-body::-webkit-scrollbar-track { background: transparent; }
+    .back-body::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
+    }
+    .back-body::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+    /* ── Tools intro note ───────────────────────── */
+    .tools-intro {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .tools-intro em {
+      font-style: normal;
+      color: var(--accent);
+      font-family: "SF Mono", "Fira Code", Consolas, monospace;
+    }
+
+    /* ── Tool cards ─────────────────────────────── */
+    .tool-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+    .tool-card:last-child { margin-bottom: 0; }
+    .tool-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .tool-name {
+      font-size: 12px;
+      font-weight: 600;
+      font-family: "SF Mono", "Fira Code", Consolas, monospace;
+      color: var(--accent);
+    }
+    .tool-model {
+      font-size: 10px;
+      font-weight: 500;
+      background: rgba(79,142,247,0.12);
+      color: var(--accent);
+      border-radius: 4px;
+      padding: 1px 6px;
+      margin-left: auto;
+    }
+    .tool-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── Header (front) ─────────────────────────── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      -webkit-app-region: drag;
+    }
+    .header .logo,
+    .header .info-btn { -webkit-app-region: no-drag; }
+    .logo {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .logo .material-symbols-outlined {
+      font-size: 28px;
+    }
+    .header-text h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.2px; }
+    .header-text p  { font-size: 12px; color: var(--muted); margin-top: 1px; }
+    .info-btn {
+      margin-left: auto;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .info-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Status badge ───────────────────────────── */
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      font-size: 13px;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--muted);
+    }
+    .dot.ok    { background: var(--success); box-shadow: 0 0 6px var(--success); }
+    .dot.warn  { background: var(--warn);    box-shadow: 0 0 6px var(--warn); }
+    .dot.error { background: var(--error);   box-shadow: 0 0 6px var(--error); }
+    .status-text { flex: 1; }
+    .status-text strong { display: block; }
+    .status-text span   { color: var(--muted); font-size: 12px; }
+
+    /* ── Form ───────────────────────────────────── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .input-wrap {
+      position: relative;
+      margin-bottom: 6px;
+    }
+    input[type="password"], input[type="text"] {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 44px 10px 14px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: "SF Mono", "Fira Code", Consolas, monospace;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus { border-color: var(--accent); }
+    .toggle-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 2px;
+      font-size: 16px;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+    .toggle-btn:hover { color: var(--text); }
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+    .hint a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .hint a:hover { text-decoration: underline; }
+
+    /* ── Checkbox row ───────────────────────────── */
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+    .checkbox-row input[type="checkbox"] {
+      width: 16px; height: 16px;
+      margin-top: 1px;
+      accent-color: var(--accent);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .checkbox-row label {
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .checkbox-row label span {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ── Save button ────────────────────────────── */
+    .save-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 11px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+      margin-bottom: 10px;
+    }
+    .save-btn:hover   { background: var(--accent-hv); }
+    .save-btn:active  { opacity: 0.85; }
+    .save-btn:disabled {
+      background: var(--border);
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+
+    /* ── Footer ─────────────────────────────────── */
+    .footer {
+      padding-top: 14px;
+      padding-bottom: 14px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+    }
+    .footer .path { color: var(--text); }
+  </style>
+</head>
+<body>
+
+  <!-- Drag strip — transparent, sits in titlebar zone, lets user drag window -->
+  <div class="drag-strip"></div>
+
+  <div class="flip-container">
+    <div class="flip-inner" id="flipInner">
+
+      <!-- ── FRONT: Setup ── -->
+      <div class="flip-front">
+
+        <div class="header">
+          <div class="logo" aria-hidden="true">
+            <span class="material-symbols-outlined">settings_input_component</span>
+          </div>
+          <div class="header-text">
+            <h1>Stitch</h1>
+            <p>Gemini API bridge for Claude</p>
+          </div>
+          <button type="button" class="info-btn" id="infoBtn" title="Available tools">i</button>
+        </div>
+
+        <div class="status-row">
+          <div class="dot" id="statusDot"></div>
+          <div class="status-text">
+            <strong id="statusTitle">Checking…</strong>
+            <span id="statusSub"></span>
+          </div>
+        </div>
+
+        <div class="section-label">Google AI Studio API Key</div>
+        <div class="input-wrap">
+          <input type="password" id="apiKeyInput" placeholder="AIzaSy…" autocomplete="off" spellcheck="false" />
+          <button type="button" class="toggle-btn" id="toggleBtn" title="Show / hide key">👁</button>
+        </div>
+        <p class="hint">
+          Get your free API key at
+          <a href="https://aistudio.google.com/api-keys" id="apiKeyLink">aistudio.google.com/api-keys</a>
+        </p>
+
+        <div class="checkbox-row" onclick="document.getElementById('registerCheck').click()">
+          <input type="checkbox" id="registerCheck" checked onclick="event.stopPropagation()" />
+          <label for="registerCheck" onclick="event.stopPropagation()">
+            Register with Claude Desktop &amp; Claude Code
+            <span>Adds stitch to claude_desktop_config.json and ~/.claude.json.</span>
+          </label>
+        </div>
+
+        <button type="button" class="save-btn" id="saveBtn">Save &amp; Apply</button>
+
+        <div class="footer">
+          Key stored securely in <span class="path" id="envPath">%APPDATA%\Stitch\.env</span>
+        </div>
+
+      </div><!-- /flip-front -->
+
+      <!-- ── BACK: Tools info ── -->
+      <div class="flip-back">
+
+        <div class="back-header">
+          <button type="button" class="back-btn" id="backBtn">&#8592;</button>
+          <h2>Available Tools</h2>
+        </div>
+
+        <div class="back-body">
+          <p class="tools-intro">Claude automatically selects the best tool for the job — no instruction needed. You can also ask Claude directly, e.g. <em>"search_web for…"</em> or <em>"search the knowledge base for…"</em></p>
+          <div class="tool-card">
+            <div class="tool-card-header">
+              <span class="tool-name">generate_content</span>
+              <span class="tool-model">Gemini 2.5 Flash</span>
+            </div>
+            <p class="tool-desc">General-purpose multimodal generation. Send text, images, audio, or video files and get a Gemini response. Use this as the default tool for any creative, analytical, or conversational task.</p>
+          </div>
+
+          <div class="tool-card">
+            <div class="tool-card-header">
+              <span class="tool-name">pdf_to_markdown</span>
+              <span class="tool-model">Gemini 2.5 Pro</span>
+            </div>
+            <p class="tool-desc">Converts a local PDF to clean, structured Markdown. Pro-class vision and spatial reasoning gives faithful extraction from scanned documents, mixed-layout reports, and complex specs — including tables.</p>
+          </div>
+
+          <div class="tool-card">
+            <div class="tool-card-header">
+              <span class="tool-name">search_web</span>
+              <span class="tool-model">Gemini 2.0 Flash</span>
+            </div>
+            <p class="tool-desc">Answers questions using live Google Search grounding. Returns cited sources alongside the response. Use for anything requiring up-to-date information that Claude's training data may not cover.</p>
+          </div>
+
+          <div class="tool-card">
+            <div class="tool-card-header">
+              <span class="tool-name">analyse_codebase</span>
+              <span class="tool-model">Gemini 2.5 Pro</span>
+            </div>
+            <p class="tool-desc">Recursively reads a local directory, packs all source files into a single context, and delegates to Gemini's 1M-token window for deep analysis. Use for architecture reviews, security audits, or whole-repo comprehension.</p>
+          </div>
+
+          <div class="tool-card">
+            <div class="tool-card-header">
+              <span class="tool-name">log_solution</span>
+              <span class="tool-model">Local · SQLite</span>
+            </div>
+            <p class="tool-desc">Saves a resolved problem and its solution to your persistent knowledge base. Claude will ask for your confirmation before saving — nothing is stored without your approval. You can also feed it knowledge manually at any time.</p>
+          </div>
+
+          <div class="tool-card">
+            <div class="tool-card-header">
+              <span class="tool-name">search_knowledge</span>
+              <span class="tool-model">SQLite + Gemini 2.5 Flash</span>
+            </div>
+            <p class="tool-desc">Searches your knowledge base before attempting to solve a problem. SQLite FTS5 does a fast keyword pass to find candidates; Gemini then ranks them semantically so the most relevant solution is surfaced — even across thousands of entries.</p>
+          </div>
+
+          <div class="tool-card">
+            <div class="tool-card-header">
+              <span class="tool-name">update_knowledge</span>
+              <span class="tool-model">Local · SQLite</span>
+            </div>
+            <p class="tool-desc">Updates an existing knowledge base entry by ID. Use this to correct a solution, add missing code snippets, or mark an entry as outdated when a better approach has been found.</p>
+          </div>
+        </div>
+
+        <div class="back-footer"></div>
+
+      </div><!-- /flip-back -->
+
+    </div><!-- /flip-inner -->
+  </div><!-- /flip-container -->
+
+  <script>
+    const api           = window.mcpSetup;
+    const flipInner     = document.getElementById("flipInner");
+    const infoBtn       = document.getElementById("infoBtn");
+    const backBtn       = document.getElementById("backBtn");
+    const apiKeyInput   = document.getElementById("apiKeyInput");
+    const toggleBtn     = document.getElementById("toggleBtn");
+    const saveBtn       = document.getElementById("saveBtn");
+    const registerCheck = document.getElementById("registerCheck");
+    const statusDot     = document.getElementById("statusDot");
+    const statusTitle   = document.getElementById("statusTitle");
+    const statusSub     = document.getElementById("statusSub");
+    const apiKeyLink    = document.getElementById("apiKeyLink");
+    const envPath       = document.getElementById("envPath");
+
+    // ── Flip ──────────────────────────────────────────────────────────────────
+    infoBtn.addEventListener("click", () => flipInner.classList.add("flipped"));
+    backBtn.addEventListener("click", () => flipInner.classList.remove("flipped"));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") flipInner.classList.remove("flipped");
+    });
+
+    // ── Status row as message box ──────────────────────────────────────────────
+    let restoreTimer = null;
+    let stableState  = null;
+
+    function setStatus(dot, title, sub) {
+      statusDot.className     = "dot " + dot;
+      statusTitle.textContent = title;
+      statusSub.textContent   = sub;
+    }
+
+    function flashStatus(dot, title, sub) {
+      if (restoreTimer) clearTimeout(restoreTimer);
+      setStatus(dot, title, sub);
+      restoreTimer = setTimeout(() => {
+        if (stableState) setStatus(stableState.dot, stableState.title, stableState.sub);
+      }, 4000);
+    }
+
+    function saveStable(dot, title, sub) {
+      stableState = { dot, title, sub };
+      if (restoreTimer) { clearTimeout(restoreTimer); restoreTimer = null; }
+      setStatus(dot, title, sub);
+    }
+
+    // ── External link ─────────────────────────────────────────────────────────
+    apiKeyLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      api.openExternal("https://aistudio.google.com/api-keys");
+    });
+
+    // ── Toggle password visibility ────────────────────────────────────────────
+    let isVisible = false;
+    toggleBtn.addEventListener("click", () => {
+      isVisible = !isVisible;
+      apiKeyInput.type = isVisible ? "text" : "password";
+      toggleBtn.textContent = isVisible ? "🙈" : "👁";
+    });
+
+    // ── Load initial state ────────────────────────────────────────────────────
+    function loadState() {
+      try {
+        const state = api.getState();
+
+        if (state.currentKey) {
+          saveStable("ok", "API key saved", "");
+          apiKeyInput.placeholder = "••••••••••••••••••••";
+        } else {
+          saveStable("warn", "No API key set", "Enter your key below to get started.");
+        }
+
+        registerCheck.checked = state.isRegistered;
+        if (state.envFilePath) envPath.textContent = state.envFilePath;
+      } catch (err) {
+        saveStable("error", "Could not load state", String(err));
+      }
+    }
+
+    loadState();
+
+    // ── Save handler ──────────────────────────────────────────────────────────
+    saveBtn.addEventListener("click", () => {
+      const apiKey = apiKeyInput.value.trim();
+
+      if (!apiKey) {
+        flashStatus("error", "Enter an API key", "Paste your key in the field above.");
+        return;
+      }
+
+      if (!apiKey.startsWith("AIza")) {
+        flashStatus("error", "Invalid API key", "Gemini keys start with AIza…");
+        return;
+      }
+
+      let result;
+      try {
+        result = api.save({ apiKey, registerMcp: registerCheck.checked });
+      } catch (err) {
+        flashStatus("error", "IPC error", err.message);
+        return;
+      }
+
+      if (result.ok) {
+        apiKeyInput.value = "";
+        apiKeyInput.type  = "password";
+        isVisible = false;
+        toggleBtn.textContent = "👁";
+        apiKeyInput.placeholder = "••••••••••••••••••••";
+
+        const sub = registerCheck.checked ? "Restart Claude Desktop to apply." : "";
+        saveStable("ok", "API key saved", sub);
+      } else {
+        flashStatus("error", "Save failed", result.error);
+      }
+    });
+
+  </script>
+</body>
+</html>
