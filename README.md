@@ -1,12 +1,18 @@
 # Stitch
 
-A custom [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that bridges Claude to the Google Gemini API. It gives Claude access to Gemini's multimodal generation, live web search, PDF parsing, large-scale codebase analysis, and a persistent local knowledge base — all through seven purpose-built tools.
+Stitch is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server that gives Claude direct access to the Google Gemini API — and builds a persistent, searchable knowledge base of every problem you've solved together.
+
+Most MCP servers extend Claude with a single capability: a web search tool, a database connector, or a file reader. Stitch takes a different approach. It combines seven purpose-built tools into one cohesive layer: Gemini's multimodal generation, live Google Search grounding, PDF parsing, large-scale codebase analysis, and a local knowledge base that grows with every project you work on. The result is a Claude that doesn't just answer questions in isolation — it remembers your stack, your past fixes, and your preferred patterns, and draws on that context every time you code.
 
 ---
 
 ## What It Does
 
-Claude can call Gemini directly from within your conversation. You get the best of both models: Claude's reasoning and context-awareness paired with Gemini's 1M-token context window, Google Search grounding, and multimodal capabilities.
+Claude can call Gemini directly from within your conversation, choosing the right model and tool for each task automatically. You get the best of both: Claude's reasoning, planning, and context-awareness combined with Gemini's 1M-token context window, real-time Google Search grounding, and multimodal capabilities.
+
+The knowledge base is what sets Stitch apart from a simple Gemini bridge. Every time you and Claude resolve a non-trivial problem — a tricky bug, an architectural decision, a working configuration — you can log it with full metadata: project, tags, environment, error messages, and code snippets. That solution is stored locally in a SQLite database and is instantly searchable from any future conversation. When Claude hits a similar problem, it can query your own history first, find the exact fix that worked in your environment, and apply it — rather than starting from scratch or suggesting generic solutions that may not fit your stack.
+
+Over time, your knowledge base becomes a personal engineering library that Claude always has access to: faster debugging, fewer repeated mistakes, and solutions built on what has actually worked for you before.
 
 ---
 
