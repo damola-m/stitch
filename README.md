@@ -235,9 +235,3 @@ npm run release
 ```
 
 Releases are output to `../release/v{version}/` and logged to `../release/RELEASES.json`.
-
----
-
-## Licence
-
-MIT
